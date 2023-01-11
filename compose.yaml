@@ -1,0 +1,22 @@
+services:
+  server:
+    build: ./server
+    container_name: fastapi_app
+    environment:
+      - PORT=8000
+      - LOG_LEVEL=debug
+    ports:
+      - "8000:8000"
+    restart: "no"
+    platform: linux/amd64
+    volumes:
+      - ./server:/app
+    command: bash /./start-reload.sh
+    # this command will tell app to watch for changes
+    # and restart the server
+
+    # you need both the volume connected AND server reloading
+    # for dev
+
+  # db:
+    # image:
