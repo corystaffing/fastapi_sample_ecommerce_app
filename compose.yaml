@@ -18,5 +18,13 @@ services:
     # you need both the volume connected AND server reloading
     # for dev
 
-  # db:
-    # image:
+  db:
+    image: postgres:15.1-alpine
+    restart: "always"
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - eog_db:/var/lb/postgresql/data/pgdata
+
+volumes:
+  eog_db:
