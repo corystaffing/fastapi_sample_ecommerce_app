@@ -11,6 +11,7 @@ ASYNC_SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://root@localhost/eog_db"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={}, future=True)
 async_engine = create_async_engine(ASYNC_SQLALCHEMY_DATABASE_URL)
+
 SessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, future=True
 )

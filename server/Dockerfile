@@ -8,3 +8,5 @@ COPY ./requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt
 
 COPY . /app
+
+# the original image automatically starts the server

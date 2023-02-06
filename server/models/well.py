@@ -1,9 +1,12 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+# pydantic will use different schemas for saving and loading models
+# use something like wellInput, or wellCreate for creating models
+# wellOutput or just well for showing
 
-class Config:
-		orm_mode = True
+
+
 
 class Well(BaseModel):
 	Id: int
@@ -41,3 +44,6 @@ class Well(BaseModel):
 	subtrend2: str
 	target_spacing: str
 	tier_name: str
+
+	class Config:
+			orm_mode = True
