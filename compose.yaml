@@ -9,6 +9,8 @@ services:
       - "8000:8000"
     restart: "no"
     platform: linux/amd64
+    depends_on:
+      - db
     volumes:
       - ./server:/app
     command: bash /./start-reload.sh
@@ -20,11 +22,31 @@ services:
 
   db:
     image: postgres:15.1-alpine
-    restart: "always"
+    restart: always
     environment:
+      #user is postgres
       POSTGRES_PASSWORD: example
     volumes:
       - eog_db:/var/lb/postgresql/data/pgdata
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - 5050:80
+    depends_on:
+      - db
+
+  # jenkins:
+  #   image: jenkins/jenkins:jdk11
+  #   ports:
+  #   - 8080:8080
+  #   volumes:
+  #   - ./jenkins_home_on_host:/var/jenkins_home
+  #   restart: unless-stopped
 
 volumes:
   eog_db:
