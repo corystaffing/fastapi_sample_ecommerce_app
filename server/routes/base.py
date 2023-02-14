@@ -3,11 +3,12 @@ from fastapi import Depends, HTTPException, APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse
 import pandas as pd
+import seeder
 
 router = APIRouter()
 
 #for test data
-f = open(os.path.join("data.json"), "r")
+f = open(os.path.join("data_eog.json"), "r")
 data = json.load(f)
 f.close()
 
@@ -16,6 +17,48 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/", response_class=HTMLResponse)
 def root(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
+
+@router.get("/seed")
+def seed(seed: bool = False, gen: str = None, qty: int = 2):
+    result = None
+    if seed:
+        if gen == 'customers':
+            result = seeder.seed_customers(qty)
+        elif gen == 'products':
+            result = seeder.seed_products(qty)
+        elif gen == 'orders':
+            pass
+            # result = seeder.seed_orders(qty)
+            #arguments: 'customer_ids', 'product_ids', 'billing_address_id', and 'shipping_address_id'
+        elif gen == 'addresses':
+            result = seeder.seed_addresses(qty)
+        else:
+            result = {"message": "Did not specify a valid generator"}
+
+    else:
+        result = {"message": "will not seed without ?seed=true"}
+
+    return result
+
+@router.get("/seed/generate")
+def seed_generate(gen: str = None, qty: int = 2):
+    result = None
+    if gen == 'customers':
+        result = seeder.generate_customers(qty)
+    elif gen == 'products':
+        result = seeder.generate_products(qty)
+    elif gen == 'customer':
+        result = seeder.generate_customer(for_seeding=False)
+    elif gen == 'orders':
+        pass
+        # result = seeder.generate_orders(qty)
+        #arguments: 'customer_ids', 'product_ids', 'billing_address_id', and 'shipping_address_id'
+    elif gen == 'addresses':
+        result = seeder.generate_addresses(qty)
+    else:
+        result = {"message": "Did not specify a valid generator"}
+
+    return result
 
 @router.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
@@ -28,7 +71,7 @@ def well_index():
 @router.get("/products")
 def product_index(q: str = None):
     data = {}
-    return {"product": data, "q": q}
+    return {"product": data, "q": q, "yo": "yo"}
 
 @router.get('/products/state')
 def product_state():
@@ -48,3 +91,9 @@ def product_state():
 
     # Plot the results
     state_counts.plot(kind='bar')
+
+# analysis routes
+@router.get("/analysis")
+def analysis(q: str = None):
+    return {"q": q, "message": "todo"}
+

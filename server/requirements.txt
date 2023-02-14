@@ -1,5 +1,8 @@
 fastapi
-pandas
 sqlalchemy
 psycopg2-binary
 asyncpg
+alembic
+pandas
+faker
+faker-commerce
