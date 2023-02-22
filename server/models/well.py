@@ -6,8 +6,6 @@ from datetime import datetime
 # wellOutput or just well for showing
 
 
-
-
 class Well(BaseModel):
 	Id: int
 	Name: str
