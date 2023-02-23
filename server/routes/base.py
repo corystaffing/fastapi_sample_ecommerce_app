@@ -7,11 +7,6 @@ import seeder
 
 router = APIRouter()
 
-#for test data
-f = open(os.path.join("data_eog.json"), "r")
-data = json.load(f)
-f.close()
-
 templates = Jinja2Templates(directory="templates")
 
 @router.get("/", response_class=HTMLResponse)
@@ -63,10 +58,6 @@ def seed_generate(gen: str = None, qty: int = 2):
 @router.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
     return {"item_id": item_id, "q": q}
-
-@router.get("/wells")
-def well_index():
-    return {"wells": data}
 
 @router.get("/products")
 def product_index(q: str = None):
