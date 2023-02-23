@@ -9,8 +9,10 @@ from sqlalchemy.orm import sessionmaker
 SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://postgres@localhost/eog_db"
 ASYNC_SQLALCHEMY_DATABASE_URL = "postgresql+asyncpg://postgres@localhost/eog_db"
 
-engine       = create_engine( SQLALCHEMY_DATABASE_URL, connect_args={}, future=True)
+# engine       = create_engine( SQLALCHEMY_DATABASE_URL, connect_args={}, future=True)
 async_engine = create_async_engine(ASYNC_SQLALCHEMY_DATABASE_URL)
+
+engine = create_engine('sqlite:///sample.db')
 
 SessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, future=True
