@@ -21,8 +21,8 @@ class Customer(Timestamp, Base):
     password   = Column(String)
     phone      = Column(String)
 
-    addresses = relationship("Address", back_populates="customer")
-    orders    = relationship("Order", back_populates="customer")
+    # addresses = relationship("Address", back_populates="customer")
+    # orders    = relationship("Order", back_populates="customer")
 
 class Product(Timestamp, Base):
     __tablename__ = 'products'
@@ -33,6 +33,7 @@ class Product(Timestamp, Base):
     quantity    = Column(Integer)
     size        = Column(String)
     color       = Column(String)
+    # category    = Column(String)
 
 
 class Address(Timestamp, Base):
@@ -45,11 +46,11 @@ class Address(Timestamp, Base):
     country_code = Column(String(2), default='US')
     customer_id  = Column(Integer)
 
-    customer = relationship("Customer", back_populates="addresses")
+    # customer = relationship("Customer", back_populates="addresses")
     # probably don't need the two below
     # would i need to know: what orders came/billed to this address?
-    billed_orders  = relationship("Order", back_populates="billing_address")
-    shipped_orders = relationship("Order", back_populates="shipping_address")
+    # billed_orders  = relationship("Order", back_populates="billing_address")
+    # shipped_orders = relationship("Order", back_populates="shipping_address")
 
 class Order(Timestamp, Base):
     __tablename__ = 'orders'
@@ -64,10 +65,10 @@ class Order(Timestamp, Base):
     billing_address_id  = Column(Integer, ForeignKey('addresses.id'))
     shipping_address_id = Column(Integer, ForeignKey('addresses.id'))
 
-    billing_address  = relationship("Address", back_populates="billed_orders", uselist=False)
-    shipping_address = relationship("Address", back_populates="shipped_orders", uselist=False)
-    customer         = relationship("Customer", back_populates="orders", uselist=False)
-    product          = relationship("Product", back_populates="orders", uselist=False) #uselist apparently creates 1:1 relationship
+    # billing_address  = relationship("Address", back_populates="billed_orders", uselist=False)
+    # shipping_address = relationship("Address", back_populates="shipped_orders", uselist=False)
+    # customer         = relationship("Customer", back_populates="orders", uselist=False)
+    # product          = relationship("Product", back_populates="orders", uselist=False) #uselist apparently creates 1:1 relationship
 
 engine = create_engine('sqlite:///sample.db')
 # engine = engine

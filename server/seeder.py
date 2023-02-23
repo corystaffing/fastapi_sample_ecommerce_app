@@ -2,7 +2,13 @@ from faker import Faker
 import faker_commerce
 import random
 # import db_setup
-from db_setup import *
+from sqlalchemy.sql import text
+from fastapi import Depends
+from db_setup import get_db, async_get_db, Base
+from models.models import Customer, Address, Product, Order
+# from alembic import op
+# dont think i can use op.bulk_insert here
+
 from pprint import pprint
 
 fake = Faker()
@@ -32,10 +38,10 @@ def generate_customer(for_seeding: bool = False):
     if not for_seeding: # use a random id if not actually seeding
         customer['id'] = random.randint(1, 1000)
 
-    customer['first_name']   = fake.first_name()
-    customer['last_name']    = fake.last_name()
-    customer['email']        = f'{customer["first_name"].lower()}.{customer["last_name"].lower()}@example.org'
-    customer['phone_number'] = fake.phone_number()
+    customer['first_name'] = fake.first_name()
+    customer['last_name']  = fake.last_name()
+    customer['email']      = f'{customer["first_name"].lower()}.{customer["last_name"].lower()}@example.org'
+    customer['phone']      = fake.phone_number()
     return customer
 
 def seed_customers(num_customers: int):
@@ -49,10 +55,18 @@ def seed_customers(num_customers: int):
         customers.append(generate_customer(for_seeding=True))
 
     # insert into db
-    db = get_db()
-    pprint('-------------------------------uiouiouio---------------------------------')
-    pprint(db.execute("SELECT CURRENT_TIMESTAMP;"))
-    pprint('-------------------------------uiouiouio---------------------------------')
+    db = next(get_db())
+    # pprint('-------------------------------uiouiouio---------------------------------')
+    pprint(db.execute(text("SELECT CURRENT_TIMESTAMP;")).first()[0])
+    # pprint(db.query(Customer).all())
+    # pprint('-------------------------------uiouiouio---------------------------------')
+    # pprint(customers)
+
+    for customer in customers:
+        user = Customer(**customer)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
     return {"message": "success"}
 
@@ -90,19 +104,42 @@ def generate_addresses(num_addresses: int = 1):
         addresses.append(address)
     return addresses
 
+def seed_addresses(num_addresses: int = 1):
+    # use only user ids from 1-220
+    # each user should have >=1 address
+    pass
+
+def seed_products(num_products: int = 1):
+    # no notes just create products
+    prods = []
+    prods = generate_products(num_products)
+
+    db = next(get_db())
+    for product in prods:
+        item = Product(**product)
+        db.add(item)
+        db.commit()
+        db.refresh(item)
+
+
+def seed_orders(num_orders: int = 1):
+    # make sure customer ids are in the db (1-220)
+    # make sure addresses are in the db
+    pass
+
 def generate_products(n: int =10):
-    sizes = ['extra small', 'small', 'medium', 'large', 'extra large', 'custom size']
+    sizes = ['extra small', 'small', 'medium', 'large', 'extra large', 'custom']
 
     products = []
     for _ in range(n):
         product = {
             'name':        fake.ecommerce_name(),
+            'description': fake.text(128),
             'price':       fake.random_int(min=2, max=100, step=1),
-            'category':    fake.random_int(min=1, max=15),
-            'color':       fake.color_name(),
-            # 'size':        fake.random_int(min=30, max=52),
+            'quantity':    fake.random_int(min=1, max=50),
             'size':        random.choice(sizes),
-            'description': fake.text(),
+            'color':       fake.color_name(),
+            # 'category':    fake.random_int(min=1, max=15),
         }
         products.append(product)
     return products
